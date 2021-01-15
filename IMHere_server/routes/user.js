@@ -25,13 +25,6 @@ router.post('/update',  async function (ctx, next) {
     }
 })
 
-router.post('/del', async function (ctx, next) {
-  const val = await delaccount(ctx.query.userid)
-  if (val) {
-      ctx.body = new SuccessModel('删除成功')
-  } else {
-      ctx.body = new ErrorModel('删除失败')
-  }
-})
+
 
 module.exports = router

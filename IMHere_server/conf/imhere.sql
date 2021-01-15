@@ -10,9 +10,9 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-12-05 22:36:34
+Date: 2020-12-27 19:38:15
 */
-DROP TABLE IF EXISTS `user`;
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -20,16 +20,16 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `userid` int NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(20) NOT NULL,
   `password` char(20) NOT NULL,
   `account` varchar(45) NOT NULL,
   `email` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`userID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+  `mobile` decimal(12,0) DEFAULT '0',
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', 'admin', '123456','10006','NULL');
-INSERT INTO `user` VALUES ('2', '123456', '123456','10078','NULL');
+INSERT INTO `user` VALUES ('1', 'admin', '123456', '10006', 'NULL', '0');

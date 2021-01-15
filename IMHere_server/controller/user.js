@@ -1,5 +1,5 @@
 const exec = require('../db/mysql')
-
+const common = require('../util/common')
 
 const getinfo = async (userid) => {
     const sql = `select * from user where userid=?`
@@ -23,17 +23,10 @@ const updateinfo = async (userid, Data = {}) => {
     return false
 }
 
-const delaccount = async userid => {
-    const sql = `delete from user where userid=?;`
-    const delData = await exec([[sql,[userid]]])
-    if (delData[0].affectedRows > 0) {
-        return true
-    }
-    return false
-}
+
 
 module.exports = {
     getinfo,
-    updateinfo,
-    delaccount
+    updateinfo
+
 }

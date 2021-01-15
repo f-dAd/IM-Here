@@ -27,7 +27,7 @@ const exec = list => {
                 let rets = [];
                 return (function dispatch(i) {
                     let args = list[i];
-                    if (!args) {//finally commit
+                    if (!args) { //finally commit
                         connection.commit(err => {
                             if (err) {
                                 connection.rollback();
@@ -56,4 +56,3 @@ const exec = list => {
 }
 
 module.exports = exec
-

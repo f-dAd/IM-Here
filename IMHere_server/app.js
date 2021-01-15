@@ -1,5 +1,8 @@
 const Koa = require('koa')
 const WebSocket = require('ws')
+const redisClient = require('./db/redis')
+const whiteList = require('./util/whitelist')
+const { ErrorModel } = require('./model/resModel')
 // 引用Server类:
 const WebSocketServer = WebSocket.Server;
 const app = new Koa()
@@ -11,9 +14,7 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
 
-const index = require('./routes/index')
-const user = require('./routes/user')
-const account = require('./routes/account')
+const registerRouter = require('./routes/index')//导入routes导出的文件
 
 //监听端口
 const port = 3000
@@ -55,10 +56,48 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
+//判断接口是否需要登录
+app.use(async (ctx, next) => {
+  let url = ctx.request.url
+  let flag = false
+  whiteList.map(res => { 
+    if (url.indexOf(res) !== -1) { 
+      flag = true  //若接口在白名单中定义了，则放行
+    }
+  })
+  if (flag) {
+    await next()  //放行
+  } else {  //否则检查token
+    if (ctx.header && ctx.header.authority) {
+      const token = ctx.header.authority
+      if (token) {
+        try {
+          let exits = await redisClient.exists(token)
+          if (exits) {//redis存在此token
+            await next()
+          } else {
+            return ctx.body = {
+              model: new ErrorModel('token失效，请重新登陆')
+            }
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      } else {//没有传token
+        return ctx.body = {
+          model: new ErrorModel('用户未登录')
+        }
+      }
+    } else {
+      return ctx.body = {
+        model: new ErrorModel('用户未登录')
+      }
+    }
+  }
+})
+
 // routes
-app.use(index.routes(), index.allowedMethods())
-app.use(user.routes(), user.allowedMethods())
-app.use(account.routes(), account.allowedMethods())
+app.use(registerRouter())
 
 // error-handling
 app.on('error', (err, ctx) => {
@@ -73,10 +112,11 @@ ws.on('connection', ws => {
   console.log('server connection');
 
   ws.on('message', msg => {
-    console.log('server receive msg：', msg);
+    console.log('client send msg：', msg);
+    ws.send('server receive msg：' + msg);
   });
 
-  ws.send('Information from the server');
+  ws.send('Connect success·····<br\>');
 });
 
 

@@ -1,30 +1,61 @@
 const router = require('koa-router')()
 const jwt = require('jsonwebtoken')
-const { SuccessModel, ErrorModel } = require('../model/resModel')
-const { login,register } = require('../controller/account')
+const redisClient = require('../db/redis.js')
+const common = require('../util/common')
+const secret = require('../util/secret')
+const exec = require('../db/mysql')
+const {
+    SuccessModel,
+    ErrorModel
+} = require('../model/resModel')
+const {
+    login,
+    register,
+    delaccount
+} = require('../controller/account')
 
 // router.prefix('/api/account')
 
 router.post('/login', async function (ctx, next) {
-    const { username, password } = ctx.request.body;
-    const data = await login(username, password);
-    if (data.username) {
-        const token = jwt.sign({
-            //token的创建日期
-            time: Date.now(),
-            //token的过期时间
-            timeout: Date.now() + 60000,
-            username: 'ctx.request.body.username',
-            id: 1
-          }, 'token')
-        model = new SuccessModel('登录成功')
+
+    //没有token，执行登录流程
+    const {
+        username,
+        password
+    } = ctx.request.body;
+    const data = await login(username, password); //返回userid
+    console.log(data)
+
+    if (data.userid) {
+        //定义一个用户信息对象
+        const paylod = {
+            name: username,
+            userid: data.userid,
+            timestamp: new Date() //加个时间戳保证加密后token的唯一性
+        }
+        // 调用上面公共的token加密方法（注：这里是没有传盐进去的，是直接在common文件引入盐）
+        // expiresIn设置token的有效期是7天
+        const token = await common.getToken(paylod, {
+            expiresIn: '7 days'
+        })
+
+        //每次登录之前先清除掉所有的有关此用户的key（根据用户id）
+        let preToken = await redisClient.get(data.userid)
+        //这个preToken就是当初登录时redis存下来的key
+        await redisClient.del(preToken)
+        //用token作为key、自定义的token前缀+token作为值 传key给前端作为校验
+        await redisClient.set(token, secret.identif + token)
+        //再生成一对键值对 用来记录是属于哪个用户的token 用户id作为key 传给前端的token（上一条键值对的key）作为值
+        await redisClient.set(data.userid, token)
+
         ctx.body = {
-            token: token,
-            model: model
+            token: token, //将token传给前端
+            model: new SuccessModel('登录成功')
         }
     } else {
-    ctx.body = new ErrorModel('登录失败')
+        ctx.body = new ErrorModel('登录失败，用户名或密码错误')
     }
+
 })
 
 router.post('/register', async function (ctx, next) {
@@ -33,9 +64,29 @@ router.post('/register', async function (ctx, next) {
     const val = await register(body)
     console.log(val);
     if (val) {
-        ctx.body = new SuccessModel('注册成功')
+        ctx.body = {
+            model: new SuccessModel('注册成功')
+        }
     } else {
-        ctx.body = new ErrorModel('注册失败')
+        ctx.body = {
+            model: new ErrorModel('注册失败')
+        }
     }
-  })
-  module.exports = router
+})
+
+router.post('/del', async function (ctx, next) {
+
+
+    const val = await delaccount(ctx.query.userid)
+    if (val) {
+        ctx.body = {
+            model: new SuccessModel('删除成功')
+        }
+    } else {
+        ctx.body = {
+            model: new ErrorModel('删除失败')
+        }
+    }
+})
+
+module.exports = router
