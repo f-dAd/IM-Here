@@ -11,7 +11,11 @@ import {
   Aside,
   Main,
   TabPane,
-  Tabs
+  Tabs,
+  Menu,
+  MenuItem,
+  MenuItemGroup,
+  Footer
 } from 'element-ui'
 
 Vue.use(Button)
@@ -23,6 +27,10 @@ Vue.use(Container)
 Vue.use(Header)
 Vue.use(Aside)
 Vue.use(Main)
+Vue.use(Footer)
 Vue.use(TabPane)
 Vue.use(Tabs)
+Vue.use(Menu)
+Vue.use(MenuItem)
+Vue.use(MenuItemGroup)
 Vue.prototype.$message = Message

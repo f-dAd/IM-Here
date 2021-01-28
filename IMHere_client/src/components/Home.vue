@@ -3,13 +3,12 @@
     <!-- 一级侧边栏 -->
     <el-aside class="aside-box " width="60px">
       <div class="avatar_box">
-        <img src="../assets/logo.png" />
+        <img class="avatar" src="../assets/logo.png" />
       </div>
-      <div class="func_box"><i class="iconfont icon-xiaoxi"></i></div>
-      <div class="func_box">
+      <router-link to="/home/list" class="func_box"><i class="iconfont icon-liaotian"></i></router-link>
+      <router-link to="/home/list/chat" class="func_box">
         <i class="iconfont icon-biaodankongjianlianxiren"></i>
-      </div>
-      <div class="func_box"><i class="iconfont icon-liaotian"></i></div>
+      </router-link>
     </el-aside>
     <!-- 右侧内容区 -->
     <el-main>
@@ -79,24 +78,22 @@ export default {
   flex-wrap: wrap; //开启自动换行
   align-items: center;
   border-right: 1px solid #F4F4F4;
+  color:#272727;
 }
 .avatar_box {
-  width: 40px;
-  height: 40px;
-  border-radius: 10%;
-  box-shadow: 0 0 1px #ddd;
   margin: 30px 0;
-  img {
-    height: 100%;
-    width: 100%;
-    border-radius: 10%;
-    background-color: rgb(241, 231, 231);
-  }
 }
 .func_box {
   i {
     font-size: 30px;
   }
   margin-bottom: 20px;
+}
+a{
+   text-decoration: none;
+}
+.router-link-active {
+    text-decoration: none;
+    color:#50a3a2;
 }
 </style>
