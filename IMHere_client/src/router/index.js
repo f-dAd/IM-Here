@@ -5,6 +5,7 @@ import Register from '../components/Register.vue'
 import Home from '../components/Home.vue'
 import MessageList from '../components/message/MessageList.vue'
 import Chat from '../components/Chat/Chat.vue'
+import ChatList from '../components/Chat/ChatList.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -12,7 +13,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/home', redirect: '/home/list' },
-  { path: '/home', component: Home, children: [{ path: '/home/list', component: MessageList, children: [{ path: '/home/list/chat', component: Chat }] }] }
+  { path: '/home', component: Home, children: [{ path: '/home/list', component: MessageList, children: [{ path: '/home/list/chat', component: Chat, children: [{ path: '/home/list/chat1', component: { default: ChatList, chatlist: ChatList } }] }] }] }
 ]
 
 const router = new VueRouter({

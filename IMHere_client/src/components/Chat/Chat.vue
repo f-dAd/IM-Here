@@ -1,22 +1,14 @@
 <template>
 <el-container class="container">
   <!-- 聊天对象 -->
-  <el-header>header</el-header>
+  <el-header><router-view></router-view></el-header>
   <!-- 聊天消息 -->
-  <el-main> <el-row>
-                          <el-col :span="2">
-                            <img class="avatar_box" :src="item.img" >
-                          </el-col>
-                          <el-col :span="12">
-                            <div class="chatPop1">
-                              <span style="line-height: 23px;">由type属性来选择tag的类型，也可以通过color属性来自定义背景色。</span>
-                            </div>
-                          </el-col>
-                        </el-row>
+  <el-main>
+    <router-view name="chatlist"></router-view>
   </el-main>
   <!-- 发送消息框 -->
   <el-footer height="150px"> <el-input class="sentcontent"
-  type="text"
+  type="texta"
   placeholder="请输入内容"
   v-model="textarea">
   </el-input>

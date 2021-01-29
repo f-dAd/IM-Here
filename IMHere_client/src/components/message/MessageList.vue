@@ -9,15 +9,13 @@
     clearable>
       </el-input>
     </el-row>
-    <el-menu router default-active="1"  active-text-color="#000"  class="el-menu-vertical-demo">
-      <el-menu-item :route="{ path: item.path, query: { chatid: item.chatid } }" v-for="(item,index) in list" :key="index" :index="item.path" class="left_message">
+      <div  v-for="(item,index) in list" :key="index" :class="item.chatid===activechatid?'active':''" class="left_messagelist" @click="activeFun(item.chatid)">
         <el-col><img class="avatar" :src="item.img" ></el-col>
         <div class="text_box">
           <div class="name text">{{item.name}}</div>
           <div class="dept text">{{item.dept}}</div>
         </div>
-      </el-menu-item>
-    </el-menu>
+      </div>
   </el-aside>
   <!-- 聊天区域 -->
   <el-main>
@@ -32,36 +30,46 @@
 export default {
   data() {
     return {
+      // 选中聊天序号
+      activechatid: '1',
       list: [
         {
-          chatid: 123,
+          chatid: 1,
           path: '/home/list/chat',
           img: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F17%2F20190117092809_ffwKZ.thumb.700_0.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1614234560&t=14d2285d04aca6c997bd43726681f132', // 头像
           name: 'hahahahh',
           dept: '123456' // 下边文字
         },
         {
-          chatid: 123,
+          chatid: 2,
           path: '/home/list/chat',
           img: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F17%2F20190117092809_ffwKZ.thumb.700_0.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1614234560&t=14d2285d04aca6c997bd43726681f132', // 头像
           name: '215',
           dept: '12cxvcx3456' // 下边文字
         },
         {
-          chatid: 123,
+          chatid: 3,
           path: '/home/list/chat',
           img: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F17%2F20190117092809_ffwKZ.thumb.700_0.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1614234560&t=14d2285d04aca6c997bd43726681f132', // 头像
           name: 'hahahacxvxcvhha',
           dept: '12cxvcx3456' // 下边文字
         },
         {
-          chatid: 123,
+          chatid: 4,
           path: '/home/list/chat',
           img: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F17%2F20190117092809_ffwKZ.thumb.700_0.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1614234560&t=14d2285d04aca6c997bd43726681f132', // 头像
           name: 'hahahacxvxcvhha',
           dept: '12cxvcx3456' // 下边文字
         }
       ]
+    }
+  },
+  methods: {
+    // 点击注册显示注册表单
+    activeFun(id) {
+      this.activechatid = id
+      // 带查询参数，变成 /register?plan=private
+      this.$router.push({ path: '/home/list/chat', query: { chatid: id } })
     }
   }
 }
@@ -78,24 +86,29 @@ export default {
 .left_header{
   padding: 15px;
 }
-.el-menu{
-  border-right: 0;
-}
-.left_message{
+
+.left_messagelist{
   display: flex;
   justify-content: start;
   background-color: #fff;
+
+  font-size: 14px;
+  color: #303133;
+  padding: 0px 20px;
+  cursor: pointer;
+  transition: border-color .3s,background-color .3s,color .3s;
+  box-sizing: border-box;
 }
-.left_message:hover{
+.left_messagelist:hover{
   background-color: #f3ecec;
 }
-.left_message.is-active{
+.left_messagelist.active{
   background-color: #EBEBEB;
 }
 .text_box{
   display: flex;
   flex-direction: column;
-  transform: translate(0, -12%);
+  margin:8px 0;
   .text{
     height: 15px;
   }
@@ -110,7 +123,7 @@ export default {
   }
 }
 .avatar {
-  margin-right: 10px;
+  margin:8px 10px 8px 0;
 }
 .el-main{
   height: 100%;
